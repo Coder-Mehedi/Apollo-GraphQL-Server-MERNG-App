@@ -1,3 +1,5 @@
+const Post = require("../../models/Post");
+
 const resolvers = {
 	Query: {
 		getPosts: async () => {

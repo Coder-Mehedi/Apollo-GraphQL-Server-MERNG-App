@@ -5,6 +5,9 @@ const rootResolver = {
 	Query: {
 		...postResolver.Query,
 	},
+	Mutation: {
+		...userResolver.Mutation,
+	},
 };
 
 module.exports = rootResolver;
