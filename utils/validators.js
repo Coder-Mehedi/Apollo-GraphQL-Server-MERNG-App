@@ -4,7 +4,6 @@ module.exports.registerValidator = (
 	password,
 	confirmPassword
 ) => {
-	// console.log(password, confirmPassword);
 	const errors = {};
 	if (username.trim() === "") {
 		errors.username = "Username must not be empty";
@@ -30,7 +29,6 @@ module.exports.registerValidator = (
 };
 
 module.exports.loginValidator = (username, password) => {
-	// console.log(password, confirmPassword);
 	const errors = {};
 	if (username.trim() === "") {
 		errors.username = "Username must not be empty";

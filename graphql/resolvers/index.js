@@ -7,6 +7,7 @@ const rootResolver = {
 	},
 	Mutation: {
 		...userResolver.Mutation,
+		...postResolver.Mutation,
 	},
 };
 
