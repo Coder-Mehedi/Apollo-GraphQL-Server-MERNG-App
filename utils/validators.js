@@ -28,3 +28,20 @@ module.exports.registerValidator = (
 		valid: Object.keys(errors).length < 1,
 	};
 };
+
+module.exports.loginValidator = (username, password) => {
+	// console.log(password, confirmPassword);
+	const errors = {};
+	if (username.trim() === "") {
+		errors.username = "Username must not be empty";
+	}
+
+	if (password === "") {
+		errors.password = "Password must not empty";
+	}
+
+	return {
+		errors,
+		valid: Object.keys(errors).length < 1,
+	};
+};
