@@ -53,6 +53,7 @@ const typeDefs = gql`
 	}
 	type Subscription {
 		newPost: Post!
+		newComment: Post!
 	}
 `;
 

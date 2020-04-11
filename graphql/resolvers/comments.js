@@ -25,6 +25,9 @@ module.exports = {
 					createdAt: new Date().toISOString(),
 				});
 				await post.save();
+				context.pubsub.publish("NEW_COMMENT", {
+					newComment: post,
+				});
 				return post;
 			} else throw new UserInputError("Post not found");
 		},
@@ -39,12 +42,19 @@ module.exports = {
 				if (post.comments[commentIndex].username === username) {
 					post.comments.splice(commentIndex, 1);
 					await post.save();
-					console.log(post);
+					context.pubsub.publish("NEW_COMMENT", {
+						newPost: post,
+					});
 					return post;
 				} else {
 					throw new AuthenticationError("Action not allowed");
 				}
 			} else throw new UserInputError("Post Not Found");
+		},
+	},
+	Subscription: {
+		newComment: {
+			subscribe: (_, __, { pubsub }) => pubsub.asyncIterator("NEW_COMMENT"),
 		},
 	},
 };

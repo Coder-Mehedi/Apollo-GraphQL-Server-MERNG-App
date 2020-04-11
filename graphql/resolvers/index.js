@@ -12,6 +12,7 @@ const rootResolver = {
 	},
 	Subscription: {
 		...postResolver.Subscription,
+		...commentResolver.Subscription,
 	},
 };
 
