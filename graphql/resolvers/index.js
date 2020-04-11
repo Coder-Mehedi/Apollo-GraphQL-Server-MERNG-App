@@ -10,6 +10,9 @@ const rootResolver = {
 		...postResolver.Mutation,
 		...commentResolver.Mutation,
 	},
+	Subscription: {
+		...postResolver.Subscription,
+	},
 };
 
 module.exports = rootResolver;
