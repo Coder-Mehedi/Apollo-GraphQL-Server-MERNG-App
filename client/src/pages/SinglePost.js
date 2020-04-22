@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useRef } from "react";
 import gql from "graphql-tag";
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import moment from "moment";
@@ -20,10 +20,12 @@ const SinglePost = (props) => {
 	const { user } = useContext(AuthContext);
 	const [comment, setComment] = useState("");
 	const { data } = useQuery(FETCH_POSTS_QUERY, { variables: { postId } });
+	const commentInputRef = useRef(null);
 
 	const [submitComment] = useMutation(SUBMIT_COMMENT_MUTATION, {
 		update() {
 			setComment("");
+			commentInputRef.current.blur();
 		},
 		variables: { postId, body: comment },
 	});
@@ -87,26 +89,29 @@ const SinglePost = (props) => {
 
 						{user && (
 							<Card fluid>
-								<p>Post a comment</p>
-								<Form>
-									<div className="ui action input fluid">
-										<input
-											type="text"
-											placeholder="Comment.."
-											name="comment"
-											value={comment}
-											onChange={(e) => setComment(e.target.value)}
-										/>
-										<button
-											type="submit"
-											className="ui button teal"
-											disabled={comment.trim() === ""}
-											onClick={submitComment}
-										>
-											Submit Comment
-										</button>
-									</div>
-								</Form>
+								<Card.Content>
+									<p>Post a comment</p>
+									<Form>
+										<div className="ui action input fluid">
+											<input
+												type="text"
+												placeholder="Comment.."
+												name="comment"
+												value={comment}
+												onChange={(e) => setComment(e.target.value)}
+												ref={commentInputRef}
+											/>
+											<button
+												type="submit"
+												className="ui button teal"
+												disabled={comment.trim() === ""}
+												onClick={submitComment}
+											>
+												Submit Comment
+											</button>
+										</div>
+									</Form>
+								</Card.Content>
 							</Card>
 						)}
 
