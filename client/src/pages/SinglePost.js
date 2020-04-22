@@ -1,8 +1,16 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import gql from "graphql-tag";
-import { useQuery } from "@apollo/react-hooks";
+import { useQuery, useMutation } from "@apollo/react-hooks";
 import moment from "moment";
-import { Button, Card, Image, Icon, Label, Grid } from "semantic-ui-react";
+import {
+	Button,
+	Form,
+	Card,
+	Image,
+	Icon,
+	Label,
+	Grid,
+} from "semantic-ui-react";
 import LikeButton from "../components/LikeButton";
 import { AuthContext } from "../context/auth";
 import DeleteButton from "../components/DeleteButton";
@@ -10,7 +18,15 @@ import DeleteButton from "../components/DeleteButton";
 const SinglePost = (props) => {
 	const postId = props.match.params.postId;
 	const { user } = useContext(AuthContext);
+	const [comment, setComment] = useState("");
 	const { data } = useQuery(FETCH_POSTS_QUERY, { variables: { postId } });
+
+	const [submitComment] = useMutation(SUBMIT_COMMENT_MUTATION, {
+		update() {
+			setComment("");
+		},
+		variables: { postId, body: comment },
+	});
 
 	function deletePostCallback() {
 		props.history.push("/");
@@ -68,6 +84,44 @@ const SinglePost = (props) => {
 								)}
 							</Card.Content>
 						</Card>
+
+						{user && (
+							<Card fluid>
+								<p>Post a comment</p>
+								<Form>
+									<div className="ui action input fluid">
+										<input
+											type="text"
+											placeholder="Comment.."
+											name="comment"
+											value={comment}
+											onChange={(e) => setComment(e.target.value)}
+										/>
+										<button
+											type="submit"
+											className="ui button teal"
+											disabled={comment.trim() === ""}
+											onClick={submitComment}
+										>
+											Submit Comment
+										</button>
+									</div>
+								</Form>
+							</Card>
+						)}
+
+						{comments.map((comment) => (
+							<Card fluid key={comment.id}>
+								<Card.Content>
+									{user && user.username === comment.username && (
+										<DeleteButton postId={id} commentId={comment.id} />
+									)}
+									<Card.Header>{comment.username}</Card.Header>
+									<Card.Meta>{moment(comment.createdAt).fromNow()}</Card.Meta>
+									<Card.Description>{comment.body}</Card.Description>
+								</Card.Content>
+							</Card>
+						))}
 					</Grid.Column>
 				</Grid.Row>
 			</Grid>
@@ -75,6 +129,21 @@ const SinglePost = (props) => {
 	}
 	return postMarkup;
 };
+
+const SUBMIT_COMMENT_MUTATION = gql`
+	mutation($postId: ID!, $body: String!) {
+		createComment(postId: $postId, body: $body) {
+			id
+			comments {
+				id
+				body
+				createdAt
+				username
+			}
+			commentCount
+		}
+	}
+`;
 
 const FETCH_POSTS_QUERY = gql`
 	query getPost($postId: ID!) {
